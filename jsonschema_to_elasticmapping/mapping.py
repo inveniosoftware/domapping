@@ -289,3 +289,12 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
         resolver.pop_scope()
 
     return es_mapping
+
+
+def clean_mapping(mapping):
+    """Recursively remove all fields set to None in a dict and child dicts.
+    This enables to override a field in a mapping's jinja template by just
+    adding it again with a null value."""
+    return {key: (value if not isinstance(value, dict)
+                  else clean_mapping(value))
+            for (key, value) in mapping.iteritems() if value is not None}
