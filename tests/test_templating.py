@@ -45,10 +45,7 @@ class TestTemplating(object):
                 'attr2': {'type': 'boolean'},
             },
         }
-        expected_result = {
-            'mytype': es_mapping,
-        }
         jinja_template = es_type_to_jinja(es_mapping, 'mytype')
         es_gen_mapping_str = jinja2.Template(jinja_template).render()
-        es_gen_mapping = json.loads('{' + es_gen_mapping_str + '}')
-        assert expected_result == es_gen_mapping
+        es_gen_mapping = json.loads(es_gen_mapping_str)
+        assert es_mapping == es_gen_mapping

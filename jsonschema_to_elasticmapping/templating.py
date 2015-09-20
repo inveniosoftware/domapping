@@ -33,10 +33,10 @@ def es_type_to_jinja(es_mapping, type_name, indent=2):
     :param indent: intentation step
     """
     result = []
-    result += '{{% block {type} %}}\n"{type}": {{\n'.format(type=type_name)
+    result += '{{\n'.format(type=type_name)
     result += __es_type_to_jinja_rec(es_mapping, type_name, indent,
                                      ' ' * indent)
-    result += '}\n{% endblock %}'
+    result += '}'
     return ''.join(result)
 
 
@@ -46,28 +46,27 @@ def __es_type_to_jinja_rec(es_mapping, path='', indent=2, start_indent=''):
     template
     """
     result = []
+    result += '{i}{{% block {path} %}}\n' \
+        .format(i=start_indent, path=path)
     root_idx = 0
     for key, value in es_mapping.iteritems():
         if key == 'properties':
             indent1 = start_indent + ' ' * indent
             result += '{i}"properties": {{\n'.format(i=start_indent)
-            result += '{i}{{% block {path}_PROPERTIES_ %}}\n' \
+            result += '{i}{{% block {path}__PROPERTIES__ %}}\n' \
                 .format(i=indent1, path=path)
             prop_idx = 0
             for prop_name, prop_schema in value.iteritems():
-                result += '{i}{{% block {path}_{name} %}}\n' \
-                    .format(i=indent1, path=path, name=prop_name)
                 result += '{i}"{name}": {{\n'.format(i=indent1, name=prop_name)
 
                 result += __es_type_to_jinja_rec(prop_schema,
-                                                 path + '_' + prop_name,
+                                                 path + '__' + prop_name,
                                                  indent,
                                                  indent1 + ' ' * indent)
 
                 result += '{i}}}{sep}\n' \
                     .format(i=indent1,
                             sep=(',' if prop_idx < len(value) - 1 else ''))
-                result += '{i}{{% endblock %}}\n'.format(i=indent1)
                 prop_idx += 1
             result += '{i}{{% endblock %}}\n'.format(i=indent1)
             result += '{i}}}'.format(i=start_indent)
@@ -78,4 +77,6 @@ def __es_type_to_jinja_rec(es_mapping, path='', indent=2, start_indent=''):
         result += '{sep}\n'.format(
             sep=(',' if root_idx < len(es_mapping) - 1 else ''))
         root_idx += 1
+    result += '{i}{{% endblock %}}\n' \
+        .format(i=start_indent)
     return result
