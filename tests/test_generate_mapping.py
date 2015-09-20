@@ -43,7 +43,7 @@ class TestMappingGeneration(object):
             },
         }
         es_mapping = {
-            '_all': True,
+            '_all': {'enable': True},
             'numeric_detection': True,
             'date_detection': True,
             'properties': {
@@ -67,7 +67,7 @@ class TestMappingGeneration(object):
             },
         }
         es_mapping = {
-            '_all': True,
+            '_all': {'enable': True},
             'numeric_detection': True,
             'date_detection': True,
             'properties': {

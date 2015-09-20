@@ -37,7 +37,7 @@ class TestTemplating(object):
     def test_json_validity(self):
         """Check that the jinja template generates the same json"""
         es_mapping = {
-            '_all': True,
+            '_all': {'enable': True},
             'numeric_detection': True,
             'date_detection': True,
             'properties': {
