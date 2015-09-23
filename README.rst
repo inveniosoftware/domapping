@@ -1,5 +1,5 @@
 =============================
- JSONSchema-to-ElasticMapping
+ es-jsonschema
 =============================
 
 Testing

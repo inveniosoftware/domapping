@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of JsonSchema-to-ElasticMapping.
+# This file is part of es-jsonschema.
 # Copyright (C) 2015 CERN.
 #
-# JsonSchema-to-ElasticMapping is free software; you can redistribute it and/or
+# es-jsonschema is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# JsonSchema-to-ElasticMapping is distributed in the hope that it will be
+# es-jsonschema is distributed in the hope that it will be
 # useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with JsonSchema-to-ElasticMapping; if not, write to the Free Software
+# along with es-jsonschema; if not, write to the Free Software
 # Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""jsonschema-to-elasticmapping."""
+"""es-jsonschema."""
 
 import os
 import sys
@@ -81,13 +81,13 @@ class pytest(testcommand):
 
 # get the version string. cannot be done with import!
 g = {}
-with open(os.path.join('jsonschema_to_elasticmapping', 'version.py'), 'rt') \
+with open(os.path.join('es_jsonschema', 'version.py'), 'rt') \
         as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
 setup(
-    name='jsonschema-to-elasticmapping',
+    name='es-jsonschema',
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
@@ -96,9 +96,9 @@ setup(
     author='invenio software collaboration',
     author_email='info@invenio-software.org',
     # FIXME
-    # url='https://github.com/inveniosoftware/jsonschema-to-elasticmapping',
+    # url='https://github.com/inveniosoftware/es-jsonschema',
     packages=[
-        'jsonschema_to_elasticmapping',
+        'es_jsonschema',
     ],
     zip_safe=False,
     include_package_data=True,
