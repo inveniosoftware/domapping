@@ -22,9 +22,9 @@
     as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-Changes
-=======
+API Docs
+========
 
-Version 0.1.0 (released TBD)
+es_jsonschema
+-------------
 
-- Initial public release.

@@ -22,9 +22,4 @@
     as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-Changes
-=======
-
-Version 0.1.0 (released TBD)
-
-- Initial public release.
+.. include:: ../CONTRIBUTING.rst

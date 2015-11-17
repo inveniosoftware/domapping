@@ -19,4 +19,10 @@
 # Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""es-jsonschema."""
+"""es-jsonschema generates Elasticsearch mappings from json-schemas."""
+
+from __future__ import absolute_import, print_function
+
+from .version import __version__
+
+__all__ = ('__version__')

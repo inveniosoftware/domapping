@@ -22,15 +22,10 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+"""Test project properties."""
 
-[build_sphinx]
-source-dir = docs/
-build-dir = docs/_build
-all_files = 1
 
-[bdist_wheel]
-universal = 1
-
-[extract_messages]
-copyright_holder = CERN
-msgid_bugs_address = info@invenio-software.org
+def test_version():
+    """Test version import."""
+    from es_jsonschema import __version__
+    assert __version__

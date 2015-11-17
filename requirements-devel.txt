@@ -22,15 +22,4 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-
-[build_sphinx]
-source-dir = docs/
-build-dir = docs/_build
-all_files = 1
-
-[bdist_wheel]
-universal = 1
-
-[extract_messages]
-copyright_holder = CERN
-msgid_bugs_address = info@invenio-software.org
+-e git+git://github.com/Julian/jsonschema.git#egg=jsonschema

@@ -1,0 +1,11 @@
+{% extends "generated_schema.json" %}
+
+{% block person__PROPERTIES__ %}
+{{ super() }},
+"private_field": null
+{% endblock %}
+
+{% block person__name %}
+{{ super() }},
+"store": true
+{% endblock %}

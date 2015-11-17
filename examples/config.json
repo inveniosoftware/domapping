@@ -1,0 +1,20 @@
+{
+    "types": [{
+        "json_type": "number",
+        "es_type": "integer",
+        "es_props": {
+            "store": true
+        }
+    }, {
+        "json_type": "string",
+        "json_format": "custom-date",
+        "es_type": "date",
+        "es_props": {
+            "store": true
+        }
+    }],
+    "all_field": false,
+    "numeric_detection": false,
+    "date_detection": true,
+    "date_format": "YYYY"
+}

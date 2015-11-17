@@ -1,0 +1,21 @@
+{
+    "id": "https://example.org/root_schema#",
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "birth_date": {
+            "type": "string",
+            "format": "custom-date"
+        },
+        "company": {"type": "string"},
+        "private_field": {"type": "string"}
+    },
+    "dependencies": {
+        "company": {
+            "properties": {
+                "years_of_work": {"type": "number"}
+            },
+            "required": ["years_of_work"]
+        }
+    }
+}

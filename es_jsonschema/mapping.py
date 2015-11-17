@@ -3,47 +3,95 @@
 # This file is part of es-jsonschema.
 # Copyright (C) 2015 CERN.
 #
-# es-jsonschema is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
+# es-jsonschema is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
 # es-jsonschema is distributed in the hope that it will be
-# useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the Free Software
-# Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with es-jsonschema; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Elastic Search integration. mapping funtion"""
-
-from es_jsonschema.errors import JsonSchemaSupportError
+"""Elastic Search integration. mapping funtion."""
 
 import jsonschema
+from six import iteritems
+
+from .errors import JsonSchemaSupportError
 
 
 class ElasticMappingGeneratorConfig(object):
     """Configuration used during elasticsearch mapping generation."""
+
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         super(ElasticMappingGeneratorConfig, self).__init__(*args, **kwargs)
+        self.all_field = True
+        """Enable/Disable "all" field generation in elasticsearch mappings."""
+        self.date_detection = True
+        """Enable/Disable date detection in elasticsearch mappings."""
+        self.numeric_detection = True
+        """Enable/Disable number detection in elasticsearch mappings."""
+        self.date_format = None
+        """Date format used in elasticsearch mappings."""
         # json type -> elasticsearch type
         # this contains the default string mapping when no format matches
-        self.__types_map = {
+        self._types_map = {
             'string': {'type': 'string'},
             'number': {'type': 'double'},
             'integer': {'type': 'integer'},
             'boolean': {'type': 'boolean'},
         }
         # json string formats -> elasticsearch type
-        self.__formats_map = {}
+        self._formats_map = {}
+
+    def load(self, config):
+        """Load a configuration dict, overriding current configuration.
+
+        The configuration dict should be of the form:
+        .. code-block:: python
+            {
+                # type mappings with parameters for py:meth:`map_type`
+                'types': [{
+                    'es_type': 'elasticsearch type',
+                    'json_type': 'json-schema type',
+                    'json_format': 'json-schema format',
+                    'es_props': {
+                        # additional elasticsearch properties
+                    },
+                }, ...],
+                # override configuration properties
+                'date_format': 'default date format',
+                'all_field': True,
+                'date_detection': True,
+                'numeric_detection': True,
+            }
+
+        :param config: A configuration dict.
+        """
+        for type_config in config['types']:
+            self.map_type(**type_config)
+        if 'all_field' in config:
+            self.all_field = config['all_field']
+        if 'date_format' in config:
+            self.date_format = config['date_format']
+        if 'date_detection' in config:
+            self.date_detection = config['date_detection']
+        if 'numeric_detection' in config:
+            self.numeric_detection = config['numeric_detection']
 
     def map_type(self, es_type, json_type, json_format=None, es_props=None):
-        """Map a json schema type (with optionally a format if it is a string)
-        to an elasticsearch type.
+        """Map a json schema type to an elasticsearch type.
 
         :param es_type: elasticsearch type
         :param json_type: json schema type
@@ -62,65 +110,36 @@ class ElasticMappingGeneratorConfig(object):
         }
 
         if json_type == 'string' and json_format:
-            self.__formats_map[json_format] = stored_mapping
+            self._formats_map[json_format] = stored_mapping
         else:
-            self.__types_map[json_type] = stored_mapping
+            self._types_map[json_type] = stored_mapping
         return self
 
     def get_es_type(self, json_type, json_format=None):
+        """Return the elasticsearch type matching the given json type.
+
+        :param json_type: json type.
+        :param json_format: json format (optional).
+        """
         if (json_type == 'string' and json_format and
-                json_format in self.__formats_map):
-            stored = self.__formats_map.get(json_format)
+                json_format in self._formats_map):
+            stored = self._formats_map.get(json_format)
         else:
-            stored = self.__types_map[json_type]
+            stored = self._types_map[json_type]
         props = stored.get('props') or {}
         if (stored['type'] == 'date' and 'format' not in props):
-            props['format'] = self.__date_format
+            props['format'] = self.date_format
         return (stored['type'], props)
 
-    @property
-    def date_format(self):
-        return getattr(self, '__date_format', None)
 
-    @date_format.setter
-    def date_format(self, date_format):
-        self.__date_format = date_format
-        return self
+def schema_to_mapping(json_schema, base_uri, context_schemas, config):
+    """Generate an elasticsearch type properties' mapping from a json schema.
 
-    @property
-    def all_field(self):
-        return getattr(self, '__all_field', True)
-
-    @all_field.setter
-    def all_field(self, enabled):
-        self.__all_field = enabled
-        return self
-
-    @property
-    def date_detection(self):
-        return getattr(self, '__date_detection', True)
-
-    @date_detection.setter
-    def date_detection(self, enabled):
-        self.__date_detection = enabled
-        return self
-
-    @property
-    def numeric_detection(self):
-        return getattr(self, '__numeric_detection', True)
-
-    @numeric_detection.setter
-    def numeric_detection(self, enabled):
-        self.__numeric_numeric = enabled
-        return self
-
-
-def generate_type_mapping(json_schema, base_uri, context_schemas, config):
-    """Generate an elasticsearch type properties' mapping corresponding to the
-    given json schema. It generates only the "type" and "properties" fields.
+    It generates only the "type" and "properties" fields.
 
     :param json_schema: json schema used to generate the elasticsearch mapping
-    :param base_uri: json path pointing to the given json_schema. Used for debug.
+    :param base_uri: json path pointing to the given json_schema. Used for
+    debug.
     :param context_schemas: dict of schema_id -> schema used to resolve
         references.
     :param config: configuration used to generate the elasticsearch mapping.
@@ -141,9 +160,10 @@ __collection_keys = frozenset(['allOf', 'anyOf', 'oneOf'])
 
 
 def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
-    """Generate recursively an elasticsearch type properties' mapping
-    corresponding to the given json schema. It generates only the "type" and
-    "properties" fields.
+    """Generate an elasticsearch type properties' mapping from a json schema.
+
+    The mapping's type generation is recursive.
+    It generates only the "type" and "properties" fields.
 
     :param json_schema: json schema used to generate the elasticsearch mapping
     :param path: json path pointing to the given json_schema. Used for debug.
@@ -264,15 +284,16 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
             es_mapping['properties'] = es_properties
         # build the elasticsearch mapping corresponding to each json schema
         # property
-        for prop, prop_schema in json_schema['properties'].iteritems():
-            es_properties[prop] = __gen_type_properties(prop_schema,
-                                                        path + '/' + prop,
-                                                        resolver, config,
-                                                        es_properties.get(prop))
+        for prop, prop_schema in iteritems(json_schema['properties']):
+            es_properties[prop] = __gen_type_properties(
+                prop_schema,
+                path + '/' + prop,
+                resolver, config,
+                es_properties.get(prop))
         # visit the dependencies defining additional properties
         if 'dependencies' in json_schema:
             deps_path = path + '/dependencies'
-            for prop, deps in json_schema['dependencies'].iteritems():
+            for prop, deps in iteritems(json_schema['dependencies']):
                 # if this is a "schema dependency", extend our current es
                 # mapping with it
                 if isinstance(deps, dict):
@@ -281,7 +302,7 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
     else:
         es_mapping['type'] = es_type
         if es_type_props:
-            for type_prop, type_prop_value in es_type_props.iteritems():
+            for type_prop, type_prop_value in iteritems(es_type_props):
                 es_mapping[type_prop] = type_prop_value
 
     # pop the current jsonschema context
@@ -293,8 +314,10 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
 
 def clean_mapping(mapping):
     """Recursively remove all fields set to None in a dict and child dicts.
+
     This enables to override a field in a mapping's jinja template by just
-    adding it again with a null value."""
+    adding it again with a null value.
+    """
     return {key: (value if not isinstance(value, dict)
                   else clean_mapping(value))
-            for (key, value) in mapping.iteritems() if value is not None}
+            for (key, value) in iteritems(mapping) if value is not None}

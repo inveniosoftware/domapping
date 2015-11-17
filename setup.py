@@ -3,83 +3,107 @@
 # This file is part of es-jsonschema.
 # Copyright (C) 2015 CERN.
 #
-# es-jsonschema is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
+# es-jsonschema is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
 # es-jsonschema is distributed in the hope that it will be
-# useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the Free Software
-# Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with es-jsonschema; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""es-jsonschema."""
+"""es-jsonschema generates Elasticsearch mappings from json-schemas."""
 
 import os
 import sys
 
-from setuptools import setup
-from setuptools.command.test import test as testcommand
+from setuptools import find_packages, setup
+from setuptools.command.test import test as TestCommand
 
-readme = open('readme.rst').read()
-history = open('changes.rst').read()
+readme = open('README.rst').read()
+history = open('CHANGES.rst').read()
 
-requirements = [
-    'jsonpointer>=1.9',
-    'jsonschema>=2.5.0',
-    'six>=1.7.2',
-    'Jinja2>=2.7',
-]
-
-test_requirements = [
-    'coverage>=3.7.1',
+tests_require = [
+    'check-manifest>=0.25',
+    'coverage>=4.0',
+    'isort>=4.2.2',
+    'pep257>=0.7.0',
+    'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
 ]
 
+extras_require = {
+    'docs': [
+        "Sphinx>=1.3",
+    ],
+    'tests': tests_require,
+}
 
-class pytest(testcommand):
+extras_require['all'] = []
+for reqs in extras_require.values():
+    extras_require['all'].extend(reqs)
 
-    """pytest test."""
+setup_requires = [
+]
 
-    user_options = [('pytest-args=', 'a', "arguments to pass to py.test")]
+install_requires = [
+    'jsonschema>=2.5.0',
+    'six>=1.7.2',
+    'Jinja2>=2.7',
+    'click>=5.1,<=6.0',
+]
+
+packages = find_packages()
+
+
+class PyTest(TestCommand):
+    """PyTest Test."""
+
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
     def initialize_options(self):
-        """init pytest."""
-        testcommand.initialize_options(self)
+        """Init pytest."""
+        TestCommand.initialize_options(self)
         self.pytest_args = []
         try:
             from ConfigParser import ConfigParser
         except ImportError:
-            from ConfigParser import ConfigParser
+            from configparser import ConfigParser
         config = ConfigParser()
-        config.read('setup.cfg')
+        config.read('pytest.ini')
         self.pytest_args = config.get('pytest', 'addopts').split(' ')
 
     def finalize_options(self):
-        """finalize pytest."""
-        testcommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
+        """Finalize pytest."""
+        TestCommand.finalize_options(self)
+        if hasattr(self, '_test_args'):
+            self.test_suite = ''
+        else:
+            self.test_args = []
+            self.test_suite = True
 
     def run_tests(self):
-        """run tests."""
+        """Run tests."""
         # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-# get the version string. cannot be done with import!
+# Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join('es_jsonschema', 'version.py'), 'rt') \
-        as fp:
+with open(os.path.join('es_jsonschema', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
@@ -88,38 +112,39 @@ setup(
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
-    keywords='json schema',
-    license='gplv2',
-    author='invenio software collaboration',
+    keywords='jsonschema, elasticsearch',
+    license='GPLv2',
+    author='CERN',
     author_email='info@invenio-software.org',
-    # FIXME
-    # url='https://github.com/inveniosoftware/es-jsonschema',
-    packages=[
-        'es_jsonschema',
-    ],
+    url='https://github.com/inveniosoftware/es-jsonschema',
+    packages=packages,
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    install_requires=requirements,
-    extras_require={
-        'docs': [
-            'sphinx>=1.3',
-            'sphinx_rtd_theme>=0.1.7'
+    entry_points={
+        'console_scripts': [
+            'esjsonschema = es_jsonschema.cli:cli',
         ],
-        'tests': test_requirements
     },
+    extras_require=extras_require,
+    install_requires=install_requires,
+    setup_requires=setup_requires,
+    tests_require=tests_require,
     classifiers=[
-        'development status :: 1 - planning',
-        'environment :: web environment',
-        'intended audience :: developers',
-        'license :: osi approved :: gnu general public license v2 (gplv2)',
-        'operating system :: os independent',
-        'programming language :: python',
-        'topic :: internet :: www/http :: dynamic content',
-        'topic :: software development :: libraries :: python modules',
-        'programming language :: python :: 2',
-        'programming language :: python :: 2.7',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Development Status :: 1 - Planning',
     ],
-    tests_require=test_requirements,
-    cmdclass={'test': pytest},
+    cmdclass={'test': PyTest},
 )

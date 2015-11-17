@@ -21,29 +21,11 @@
     waive the privileges and immunities granted to it by virtue of its status
     as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-===============
- es-jsonschema
-===============
 
-.. image:: https://img.shields.io/travis/inveniosoftware/es-jsonschema.svg
-        :target: https://travis-ci.org/inveniosoftware/es-jsonschema
-
-.. image:: https://img.shields.io/coveralls/inveniosoftware/es-jsonschema.svg
-        :target: https://coveralls.io/r/inveniosoftware/es-jsonschema
-
-.. image:: https://img.shields.io/github/tag/inveniosoftware/es-jsonschema.svg
-        :target: https://github.com/inveniosoftware/es-jsonschema/releases
-
-.. image:: https://img.shields.io/pypi/dm/es-jsonschema.svg
-        :target: https://pypi.python.org/pypi/es-jsonschema
-
-.. image:: https://img.shields.io/github/license/inveniosoftware/es-jsonschema.svg
-        :target: https://github.com/inveniosoftware/es-jsonschema/blob/master/LICENSE
-
+Authors
+=======
 
 es-jsonschema provides a library and a CLI generating Elasticsearch mappings from json-schemas.
 
-*This is an experimental developer preview release.*
-
-* Free software: GPLv2 license
-* Documentation: https://pythonhosted.org/es-jsonschema/
+- Nicolas Harraudeau <nicolas.harraudeau@cern.ch>
+- Sylvain Letreguilly <letreguilly@ill.fr>

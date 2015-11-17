@@ -22,9 +22,8 @@
     as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-Changes
+=======
+ Usage
 =======
 
-Version 0.1.0 (released TBD)
-
-- Initial public release.
+.. automodule:: es_jsonschema

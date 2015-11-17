@@ -23,14 +23,21 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-[build_sphinx]
-source-dir = docs/
-build-dir = docs/_build
-all_files = 1
+# Check manifest will not automatically add these two files:
+include .dockerignore
+include .editorconfig
 
-[bdist_wheel]
-universal = 1
-
-[extract_messages]
-copyright_holder = CERN
-msgid_bugs_address = info@invenio-software.org
+# added by check_manifest.py
+include *.rst
+include *.sh
+include *.txt
+include LICENSE
+include pytest.ini
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include examples *.py
+recursive-include examples *.json
+recursive-include tests *.py
+recursive-exclude examples/generated *
