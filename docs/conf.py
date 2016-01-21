@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -69,7 +69,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'es-jsonschema'
+project = u'DoMapping'
 copyright = u'2015, CERN'
 author = u'CERN'
 
@@ -81,7 +81,7 @@ author = u'CERN'
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join('..', 'es_jsonschema', 'version.py'), 'rt') as fp:
+with open(os.path.join('..', 'domapping', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
@@ -137,15 +137,15 @@ todo_include_todos = False
 html_theme = 'alabaster'
 
 html_theme_options = {
-    'description': 'es-jsonschema provides a library and a CLI generating Elasticsearch mappings from json-schemas.',
+    'description': 'DoMapping provides a library and a CLI generating Elasticsearch mappings from JSON Schemas.',
     'github_user': 'inveniosoftware',
-    'github_repo': 'es-jsonschema',
+    'github_repo': 'domapping',
     'github_button': False,
     'github_banner': True,
     'show_powered_by': False,
     'extra_nav_links': {
-        'es-jsonschema@GitHub': 'http://github.com/inveniosoftware/es-jsonschema',
-        'es-jsonschema@PyPI': 'http://pypi.python.org/pypi/es-jsonschema/',
+        'domapping@GitHub': 'http://github.com/inveniosoftware/domapping',
+        'domapping@PyPI': 'http://pypi.python.org/pypi/domapping/',
     }
 }
 
@@ -250,7 +250,7 @@ html_sidebars = {
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'es-jsonschema_namedoc'
+htmlhelp_basename = 'domapping_namedoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -272,7 +272,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'es-jsonschema.tex', u'es-jsonschema Documentation',
+    (master_doc, 'domapping.tex', u'DoMapping Documentation',
      u'CERN', 'manual'),
 ]
 
@@ -302,7 +302,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'es-jsonschema', u'es-jsonschema Documentation',
+    (master_doc, 'DoMapping', u'DoMapping Documentation',
      [author], 1)
 ]
 
@@ -316,8 +316,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'es-jsonschema', u'es-jsonschema Documentation',
-     author, 'es-jsonschema', 'es-jsonschema provides a library and a CLI generating Elasticsearch mappings from json-schemas.',
+    (master_doc, 'DoMapping', u'DoMapping Documentation',
+     author, 'DoMapping', 'DoMapping provides a library and a CLI generating Elasticsearch mappings from JSON Schemas.',
      'Miscellaneous'),
 ]
 

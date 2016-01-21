@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -22,7 +22,7 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""es-jsonschema generates Elasticsearch mappings from json-schemas."""
+"""DoMapping generates Elasticsearch mappings from JSON Schemas."""
 
 import os
 import sys
@@ -103,12 +103,12 @@ class PyTest(TestCommand):
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join('es_jsonschema', 'version.py'), 'rt') as fp:
+with open(os.path.join('domapping', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
 setup(
-    name='es-jsonschema',
+    name='domapping',
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
@@ -116,14 +116,14 @@ setup(
     license='GPLv2',
     author='CERN',
     author_email='info@invenio-software.org',
-    url='https://github.com/inveniosoftware/es-jsonschema',
+    url='https://github.com/inveniosoftware/domapping',
     packages=packages,
     zip_safe=False,
     include_package_data=True,
     platforms='any',
     entry_points={
         'console_scripts': [
-            'esjsonschema = es_jsonschema.cli:cli',
+            'domapping = domapping.cli:cli',
         ],
     },
     extras_require=extras_require,

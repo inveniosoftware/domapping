@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -22,7 +22,7 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Tests of es_jsonschema.cli."""
+"""Tests of domapping.cli."""
 
 import copy
 import json
@@ -33,9 +33,9 @@ import traceback
 import jinja2
 from click.testing import CliRunner
 
-from es_jsonschema.cli import jinja_to_mapping_cli, mapping_to_jinja_cli, \
+from domapping.cli import jinja_to_mapping_cli, mapping_to_jinja_cli, \
     schema_to_mapping_cli
-from es_jsonschema.errors import JsonSchemaSupportError
+from domapping.errors import JsonSchemaSupportError
 
 
 def assert_no_exception(result):

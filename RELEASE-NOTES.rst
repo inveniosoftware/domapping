@@ -1,13 +1,13 @@
-======================
- es-jsonschema v0.1.0
-======================
+==================
+ DoMapping v0.1.0
+==================
 
-es-jsonschema v0.1.0 was released on TBD, 2015.
+DoMapping v0.1.0 was released on January 21, 2016.
 
 About
 -----
 
-es-jsonschema provides a library and a CLI generating Elasticsearch mappings from json-schemas.
+DoMapping provides a library and a CLI generating Elasticsearch mappings from JSON Schemas.
 
 *This is an experimental developer preview release.*
 
@@ -19,18 +19,18 @@ What's new
 Installation
 ------------
 
-   $ pip install es-jsonschema==0.1.0
+   $ pip install domapping==0.1.0
 
 Documentation
 -------------
 
-   http://pythonhosted.org/es-jsonschema/
+   http://pythonhosted.org/domapping/
 
-Happy hacking and thanks for flying es-jsonschema.
+Happy hacking and thanks for flying DoMapping.
 
 | Invenio Development Team
 |   Email: info@invenio-software.org
 |   IRC: #invenio on irc.freenode.net
 |   Twitter: http://twitter.com/inveniosoftware
-|   GitHub: https://github.com/inveniosoftware/es-jsonschema
+|   GitHub: https://github.com/inveniosoftware/domapping
 |   URL: http://invenio-software.org

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -23,7 +23,7 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-pep257 es_jsonschema && \
+pep257 domapping && \
 isort -rc -c -df **/*.py && \
 check-manifest --ignore ".travis-*" && \
 sphinx-build -qnNW docs docs/_build/html && \

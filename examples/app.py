@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -38,9 +38,9 @@ The same result could be created with the cli:
 
     $ cd examples
     $ mkdir generated
-    $ esjsonschema schema_to_mapping schema.json --config config.json | \
-        esjsonschema mapping_to_jinja > generated/generated_schema.json
-    $ esjsonschema jinja_to_mapping template.json --context_path generated
+    $ domapping schema_to_mapping schema.json --config config.json | \
+        domapping mapping_to_jinja > generated/generated_schema.json
+    $ domapping jinja_to_mapping template.json --context_path generated
 """
 
 from __future__ import absolute_import, print_function
@@ -48,9 +48,8 @@ from __future__ import absolute_import, print_function
 import json
 import os
 
-from es_jsonschema.mapping import ElasticMappingGeneratorConfig, \
-    schema_to_mapping
-from es_jsonschema.templating import jinja_to_mapping, mapping_to_jinja
+from domapping.mapping import ElasticMappingGeneratorConfig, schema_to_mapping
+from domapping.templating import jinja_to_mapping, mapping_to_jinja
 
 config = ElasticMappingGeneratorConfig()
 

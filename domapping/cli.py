@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of es-jsonschema.
-# Copyright (C) 2015 CERN.
+# This file is part of DoMapping.
+# Copyright (C) 2015, 2016 CERN.
 #
-# es-jsonschema is free software; you can redistribute it
+# DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# es-jsonschema is distributed in the hope that it will be
+# DoMapping is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with es-jsonschema; if not, write to the
+# along with DoMapping; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -48,11 +48,11 @@ def cli():
 @click.option('--indent', '-i', default=4, type=click.INT,
               help='Output json indentation step.')
 def schema_to_mapping_cli(schema, output, config, indent):
-    """Generate Elasticsearch mapping from json-schema."""
+    """Generate Elasticsearch mapping from JSON Schema."""
     parsed_schema = json.load(schema)
 
     if 'id' not in parsed_schema and not hasattr(schema, 'name'):
-        raise JsonSchemaSupportError('json-schema does not contain any '
+        raise JsonSchemaSupportError('JSON Schema does not contain any '
                                      '\'id\' field and input has no name',
                                      '<INPUT>')
     id = parsed_schema.get('id',
