@@ -42,6 +42,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
+    'responses>=0.5.1'
 ]
 
 extras_require = {

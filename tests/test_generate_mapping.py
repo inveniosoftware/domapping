@@ -24,7 +24,10 @@
 
 """Test Elasticsearch mapping from jsonschemas."""
 
+import json
+
 import pytest
+import responses
 
 from domapping.errors import JsonSchemaSupportError
 from domapping.mapping import ElasticMappingGeneratorConfig, schema_to_mapping
@@ -58,19 +61,30 @@ def test_simple_properties():
 def test_references():
     """Test mapping generation from a schema containing references."""
     json_schema = {
-        'id': 'https://example.org/root_schema#',
+        'id': 'https://example.org/root_schema.json',
         'type': 'object',
         'properties': {
             'orig': {'type': 'string'},
             'local_ref': {'$ref': '#/properties/orig'},
+            'cached_ext_ref': {
+                '$ref':
+                'https://example.org/cached_external_schema.json#'
+                '/definitions/cached_ext_def'
+            },
             'ext_ref': {
                 '$ref':
-                'https://example.org/external_schema#/definitions/ext_def'
+                'external_schema.json#/definitions/ext_def'
             },
         },
     }
-    external_json_schema = {
-        'id': 'https://example.org/external_schema#',
+    cached_external_json_schema = {
+        'id': 'https://example.org/cached_external_schema.json',
+        'definitions': {
+            'cached_ext_def': {'type': 'boolean'},
+        },
+    }
+    non_cached_external_json_schema = {
+        'id': 'https://example.org/external_schema.json',
         'definitions': {
             'ext_def': {'type': 'boolean'},
         },
@@ -82,13 +96,21 @@ def test_references():
         'properties': {
             'orig': {'type': 'string'},
             'local_ref': {'type': 'string'},
+            'cached_ext_ref': {'type': 'boolean'},
             'ext_ref': {'type': 'boolean'},
         },
     }
-    result_mapping = schema_to_mapping(
-        json_schema, json_schema['id'], {
-            external_json_schema['id']: external_json_schema
-        }, ElasticMappingGeneratorConfig())
+    with responses.RequestsMock() as rsps:
+        # serve the external_schema.json file
+        rsps.add(responses.GET, 'https://example.org/external_schema.json',
+                 body=json.dumps(non_cached_external_json_schema),
+                 status=200,
+                 content_type='application/json')
+
+        result_mapping = schema_to_mapping(
+            json_schema, json_schema['id'], {
+                cached_external_json_schema['id']: cached_external_json_schema
+            }, ElasticMappingGeneratorConfig())
     assert result_mapping == es_mapping
 
 
