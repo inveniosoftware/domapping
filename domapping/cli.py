@@ -25,8 +25,11 @@
 """CLI commands."""
 
 import json
+import os
+import sys
 
 import click
+from six.moves import urllib
 
 from .errors import JsonSchemaSupportError
 from .mapping import ElasticMappingGeneratorConfig, schema_to_mapping
@@ -49,14 +52,20 @@ def cli():
               help='Output json indentation step.')
 def schema_to_mapping_cli(schema, output, config, indent):
     """Generate Elasticsearch mapping from JSON Schema."""
+    file_url = None
+    if schema != sys.stdin and hasattr(schema, 'name'):
+        assert os.path.isfile(schema.name)
+        file_url = ('file://' +
+                    urllib.request.pathname2url(os.path.abspath(schema.name)))
+
     parsed_schema = json.load(schema)
 
-    if 'id' not in parsed_schema and not hasattr(schema, 'name'):
+    if 'id' not in parsed_schema and not file_url:
         raise JsonSchemaSupportError('JSON Schema does not contain any '
-                                     '\'id\' field and input has no name',
+                                     '\'id\' field and input is not a file',
                                      '<INPUT>')
     id = parsed_schema.get('id',
-                           schema.name if hasattr(schema, 'name') else None)
+                           file_url)
 
     config_instance = ElasticMappingGeneratorConfig()
     if config:
