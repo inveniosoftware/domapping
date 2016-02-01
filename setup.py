@@ -62,7 +62,7 @@ install_requires = [
     'jsonschema>=2.5.0',
     'six>=1.7.2',
     'Jinja2>=2.7',
-    'click>=5.1,<=6.0',
+    'click>=5.1',
 ]
 
 packages = find_packages()
