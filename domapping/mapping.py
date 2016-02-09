@@ -25,9 +25,9 @@
 """Elastic Search integration. mapping funtion."""
 
 import jsonschema
-from six import iteritems
+from six import iteritems, string_types
 
-from .errors import JsonSchemaSupportError
+from .errors import JsonSchemaSupportError, UnknownFieldTypeError
 
 
 class ElasticMappingGeneratorConfig(object):
@@ -217,9 +217,13 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
     if not json_type:
         if 'properties' in json_schema:
             json_type = 'object'
+        elif 'enum' in json_schema:
+            json_type = _guess_enum_type(json_schema['enum'], path)
         else:
-            # FIXME: handle enums with no type
-            raise JsonSchemaSupportError('Schema has no "type" field', path)
+            raise UnknownFieldTypeError(
+                'Schema field type cannot be guessed. Only fields with "type"'
+                ' defined or with an "enum" array of strings are supported',
+                path)
 
     if isinstance(json_type, list):
         raise JsonSchemaSupportError('Schema with array of types are ' +
@@ -310,6 +314,24 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
         resolver.pop_scope()
 
     return es_mapping
+
+
+def _guess_enum_type(enum_array, path):
+    """Try to guess what a field's type is from the provided enum array.
+
+    Only string values are supported for the time being.
+    """
+    for value in enum_array:
+        if not isinstance(value, string_types):
+            raise UnknownFieldTypeError(
+                '"{}" enum value type is not supported. Schema field type'
+                ' cannot be guessed from enum. Only "string"'
+                ' values are accepted when "type" is not defined.'.format(
+                    value
+                ),
+                path)
+    # TODO: try to guess other types. How to do it for numbers as there
+    return 'string'
 
 
 def clean_mapping(mapping):

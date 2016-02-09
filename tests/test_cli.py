@@ -36,7 +36,18 @@ from click.testing import CliRunner
 
 from domapping.cli import jinja_to_mapping_cli, mapping_to_jinja_cli, \
     schema_to_mapping_cli
-from domapping.errors import JsonSchemaSupportError
+from domapping.errors import JsonSchemaSupportError, UnknownFieldTypeError
+
+
+def assert_exception(result, expected_exception):
+    """Assert that a cli result has the expected exception.
+
+    If the exception is different and there is an exception the stack trace,
+    it is printed.
+    """
+    if result.exception and isinstance(result.exception, expected_exception):
+        traceback.print_exception(*result.exc_info)
+    assert isinstance(result.exception, expected_exception)
 
 
 def assert_no_exception(result):
@@ -89,7 +100,8 @@ config = {
 
 
 @pytest.mark.parametrize(
-    'src_schema, schemas, config, expected_mapping,test_stream',
+    'src_schema, schemas, config, expected_mapping,'
+    'expected_exception,test_stream',
     [
         # simple schema test
         (
@@ -108,6 +120,7 @@ config = {
             },
             config,
             expected_mapping,
+            None,
             True,
         ),
         # multiple schema files without id and with relative references.
@@ -143,11 +156,72 @@ config = {
             },
             config,
             expected_mapping,
+            None,
+            False,
+        ),
+        # test guessing field type from enum array.
+        (
+            'schema.json',
+            {
+                'schema.json': {
+                    'id': 'https://example.org/root_schema#',
+                    'type': 'object',
+                    'properties': {
+                        'name': {
+                            'enum': ["value 1", "value 2", "value 3"]
+                        },
+                        'nb': {'type': 'number'},
+                        'creation_date':
+                        {'type': 'string', 'format': 'mydate'}
+                    },
+                },
+            },
+            config,
+            expected_mapping,
+            None,
+            False,
+        ),
+        # Guessing from enum with non 'string' fields should fail.
+        (
+            'schema.json',
+            {
+                'schema.json': {
+                    'id': 'https://example.org/root_schema#',
+                    'type': 'object',
+                    'properties': {
+                        'name': {
+                            'enum': ["value 1", "value 2", 3]
+                        },
+                    },
+                },
+            },
+            config,
+            None,
+            UnknownFieldTypeError,
+            False,
+        ),
+        # Guessing type with just format is not allowed and should fail.
+        (
+            'schema.json',
+            {
+                'schema.json': {
+                    'id': 'https://example.org/root_schema#',
+                    'type': 'object',
+                    'properties': {
+                        'name': {
+                            'format': 'not important'
+                        },
+                    },
+                },
+            },
+            config,
+            None,
+            UnknownFieldTypeError,
             False,
         ),
     ])
 def test_schema_to_mapping(src_schema, schemas, config, expected_mapping,
-                           test_stream):
+                           expected_exception, test_stream):
     """Test schema_to_mapping."""
     config_file = 'config.json'
 
@@ -164,8 +238,11 @@ def test_schema_to_mapping(src_schema, schemas, config, expected_mapping,
             schema_to_mapping_cli,
             [src_schema, '-', '--config', config_file],
         )
-        assert_no_exception(result)
-        assert json.loads(result.output) == expected_mapping
+        if expected_exception:
+            assert_exception(result, expected_exception)
+        else:
+            assert_no_exception(result)
+            assert json.loads(result.output) == expected_mapping
 
         if test_stream:
             # test with a stream instead of a file
@@ -174,18 +251,21 @@ def test_schema_to_mapping(src_schema, schemas, config, expected_mapping,
                 ['-', '-', '--config', config_file],
                 input=json.dumps(schemas[src_schema]),
             )
-            assert_no_exception(result)
-            assert json.loads(result.output) == expected_mapping
+            if expected_exception:
+                assert_exception(result, expected_exception)
+            else:
+                assert_no_exception(result)
+                assert json.loads(result.output) == expected_mapping
 
-            # test with a stream instead of a file and no id
-            modified_schema = copy.deepcopy(schemas[src_schema])
-            del modified_schema['id']
-            result = runner.invoke(
-                schema_to_mapping_cli,
-                ['-', '-', '--config', config_file],
-                input=json.dumps(modified_schema),
-            )
-            assert type(result.exception) == JsonSchemaSupportError
+                # test with a stream instead of a file and no id
+                modified_schema = copy.deepcopy(schemas[src_schema])
+                del modified_schema['id']
+                result = runner.invoke(
+                    schema_to_mapping_cli,
+                    ['-', '-', '--config', config_file],
+                    input=json.dumps(modified_schema),
+                )
+                assert type(result.exception) == JsonSchemaSupportError
 
 
 def test_mapping_to_jinja():

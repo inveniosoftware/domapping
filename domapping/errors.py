@@ -26,7 +26,7 @@
 
 
 class JsonSchemaSupportError(Exception):
-    """Exception thrown when a json schema is not supported by a function."""
+    """Exception raised when a json schema is not supported by a function."""
 
     def __init__(self, message, path, *args, **kwargs):
         """Constructor.
@@ -35,6 +35,24 @@ class JsonSchemaSupportError(Exception):
         :param path: path of the failing file
         """
         super(JsonSchemaSupportError, self).__init__(*args, **kwargs)
+        self.message = message
+        self.path = path
+
+    def __str__(self):
+        """Return the formatted error message string."""
+        return 'ERROR {0} IN {1}'.format(self.message, self.path)
+
+
+class UnknownFieldTypeError(Exception):
+    """Exception raised when a json schema field type cannot be guessed."""
+
+    def __init__(self, message, path, *args, **kwargs):
+        """Constructor.
+
+        :param message: error message
+        :param path: path of the failing file
+        """
+        super(UnknownFieldTypeError, self).__init__(*args, **kwargs)
         self.message = message
         self.path = path
 
