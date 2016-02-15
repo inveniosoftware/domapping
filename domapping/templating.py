@@ -41,13 +41,13 @@ def mapping_to_jinja(es_mapping, type_name, indent=2):
     """
     result = []
     result += '{{\n'.format(type=type_name)
-    result += __mapping_to_jinja_rec(es_mapping, type_name, indent,
-                                     ' ' * indent)
+    result += _mapping_to_jinja_rec(es_mapping, type_name, indent,
+                                    ' ' * indent)
     result += '}'
     return ''.join(result)
 
 
-def __mapping_to_jinja_rec(es_mapping, path='', indent=2, start_indent=''):
+def _mapping_to_jinja_rec(es_mapping, path='', indent=2, start_indent=''):
     """Pretty print an elasticsearch type mapping as a jinja template.
 
     The printing is recursive.
@@ -66,10 +66,10 @@ def __mapping_to_jinja_rec(es_mapping, path='', indent=2, start_indent=''):
             for prop_name, prop_schema in iteritems(value):
                 result += '{i}"{name}": {{\n'.format(i=indent1, name=prop_name)
 
-                result += __mapping_to_jinja_rec(prop_schema,
-                                                 path + '__' + prop_name,
-                                                 indent,
-                                                 indent1 + ' ' * indent)
+                result += _mapping_to_jinja_rec(prop_schema,
+                                                path + '__' + prop_name,
+                                                indent,
+                                                indent1 + ' ' * indent)
 
                 result += '{i}}}{sep}\n' \
                     .format(i=indent1,

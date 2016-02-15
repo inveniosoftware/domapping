@@ -147,7 +147,7 @@ def schema_to_mapping(json_schema, base_uri, context_schemas, config):
     resolver = jsonschema.RefResolver(referrer=json_schema,
                                       store=context_schemas,
                                       base_uri=base_uri)
-    return __gen_type_properties(json_schema, base_uri, resolver, config, {
+    return _gen_type_properties(json_schema, base_uri, resolver, config, {
         '_all': {'enable': config.all_field},
         'numeric_detection': config.numeric_detection,
         'date_detection': config.date_detection,
@@ -156,10 +156,10 @@ def schema_to_mapping(json_schema, base_uri, context_schemas, config):
     })
 
 
-__collection_keys = frozenset(['allOf', 'anyOf', 'oneOf'])
+_collection_keys = frozenset(['allOf', 'anyOf', 'oneOf'])
 
 
-def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
+def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
     """Generate an elasticsearch type properties' mapping from a json schema.
 
     The mapping's type generation is recursive.
@@ -196,7 +196,7 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
 
     # if the schema is in fact a collection of schemas, merge them
     json_schema_keys = set(json_schema.keys())
-    collection_intersect = json_schema_keys.intersection(__collection_keys)
+    collection_intersect = json_schema_keys.intersection(_collection_keys)
     if collection_intersect:
         # we suppose the schema is valid and only one of the collection keys
         # is present
@@ -206,8 +206,8 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
         path += '/' + collection_key
         index = 0
         for sub_schema in json_schema.get(collection_key):
-            __gen_type_properties(sub_schema, path + '[' + str(index) + ']',
-                                  resolver, config, es_mapping)
+            _gen_type_properties(sub_schema, path + '[' + str(index) + ']',
+                                 resolver, config, es_mapping)
             index += 1
         return es_mapping
 
@@ -239,15 +239,15 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
         if isinstance(items, list):
             index = 0
             for item in items:
-                __gen_type_properties(item, path + '[' + str(index) + ']',
-                                      resolver, config, es_mapping)
+                _gen_type_properties(item, path + '[' + str(index) + ']',
+                                     resolver, config, es_mapping)
                 index += 1
             return es_mapping
         else:
             # visit items' schema and use it to extend current elasticsearch
             # mapping
-            return __gen_type_properties(items, path, resolver, config,
-                                         es_mapping)
+            return _gen_type_properties(items, path, resolver, config,
+                                        es_mapping)
 
     # find the corresponding elasticsearch type
     if json_type == 'object':
@@ -285,7 +285,7 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
         # build the elasticsearch mapping corresponding to each json schema
         # property
         for prop, prop_schema in iteritems(json_schema['properties']):
-            es_properties[prop] = __gen_type_properties(
+            es_properties[prop] = _gen_type_properties(
                 prop_schema,
                 path + '/' + prop,
                 resolver, config,
@@ -297,8 +297,8 @@ def __gen_type_properties(json_schema, path, resolver, config, es_mapping):
                 # if this is a "schema dependency", extend our current es
                 # mapping with it
                 if isinstance(deps, dict):
-                    __gen_type_properties(deps, deps_path + '[' + prop + ']',
-                                          resolver, config, es_mapping)
+                    _gen_type_properties(deps, deps_path + '[' + prop + ']',
+                                         resolver, config, es_mapping)
     else:
         es_mapping['type'] = es_type
         if es_type_props:
