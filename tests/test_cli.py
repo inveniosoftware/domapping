@@ -267,6 +267,20 @@ def test_schema_to_mapping(src_schema, schemas, config, expected_mapping,
                 )
                 assert type(result.exception) == JsonSchemaSupportError
 
+        # Test of `final` parameter
+        result = runner.invoke(
+                schema_to_mapping_cli,
+                ['-t', 'schema', '--config', config_file, src_schema])
+        if expected_exception:
+            assert_exception(result, expected_exception)
+        else:
+            assert_no_exception(result)
+            assert json.loads(result.output) == {
+                'mappings': {
+                    'schema': expected_mapping
+                }
+            }
+
 
 def test_mapping_to_jinja():
     """Test mapping_to_jinja."""
@@ -353,7 +367,232 @@ def test_mapping_to_jinja():
 
     result = runner.invoke(
         mapping_to_jinja_cli,
-        ['-', '-', '--type', type_name],
+        ['-', '-', '--mapping-type', type_name],
+        input=json.dumps(mapping),
+    )
+
+    assert_no_exception(result)
+    # use the child template to modify the output template.
+    jinja_env = jinja2.Environment(
+        loader=jinja2.DictLoader({'generated': result.output}))
+    gen_output = json.loads(jinja_env.from_string(child_template).render())
+    assert gen_output == expected
+
+
+def test_multiple_mapping_to_jinja():
+    """Test mapping_to_jinja with a valid mapping containing multiple.
+
+    Check mapping_to_jinja with a valid mapping containing multiple.
+    """
+    mapping = {
+        "mappings": {
+            "test1": {
+                "properties": {
+                    'sub1': {
+                        'type': 'string',
+                    }
+                }
+            },
+            "test2": {
+                "properties": {
+                    'sub2': {
+                        'type': 'string',
+                    }
+                }
+            }
+        }
+    }
+
+    # template which extends the generated one and will be compiled.
+    child_template = """
+    {% extends "generated"%}
+
+    {% block test1 %}
+    {{ super() }},
+    "top_attr": "top_value"
+    {%endblock%}
+
+    {% block test1__PROPERTIES__ %}
+    {{ super() }},
+    "prop_attr": "prop_value"
+    {%endblock%}
+
+    {% block test1__sub1 %}
+    {{ super() }},
+    "sub1_attr": "sub1_value"
+    {%endblock%}
+
+    {% block test2 %}
+    {{ super() }},
+    "top_attr": "top_value"
+    {%endblock%}
+
+    {% block test2__PROPERTIES__ %}
+    {{ super() }},
+    "prop_attr": "prop_value"
+    {%endblock%}
+
+    {% block test2__sub2 %}
+    {{ super() }},
+    "sub2_attr": "sub2_value"
+    {%endblock%}
+    """
+
+    # build expected output
+    expected = copy.deepcopy(mapping)
+    expected['mappings']['test1']['top_attr'] = 'top_value'
+    expected['mappings']['test1']['properties']['prop_attr'] = 'prop_value'
+    expected['mappings']['test1']['properties']['sub1'] = {
+        'sub1_attr': 'sub1_value',
+        'type': 'string'
+    }
+    expected['mappings']['test2']['top_attr'] = 'top_value'
+    expected['mappings']['test2']['properties']['prop_attr'] = 'prop_value'
+    expected['mappings']['test2']['properties']['sub2'] = {
+        'sub2_attr': 'sub2_value',
+        'type': 'string'
+    }
+
+    runner = CliRunner()
+
+    result = runner.invoke(
+        mapping_to_jinja_cli,
+        ['-', '-'],
+        input=json.dumps(mapping),
+    )
+
+    assert_no_exception(result)
+    # use the child template to modify the output template.
+    jinja_env = jinja2.Environment(
+        loader=jinja2.DictLoader({'generated': result.output}))
+    content = jinja_env.from_string(child_template).render()
+    gen_output = json.loads(content)
+    assert gen_output == expected
+
+
+def test_mapping_to_jinja_inconsistencies():
+    """Test mapping_to_jinja.
+
+    Check that mapping_to_jinja fails if --mapping-type is set when it is
+    called on a mapping having multiple types in it.
+    """
+    mapping = {
+        "mappings": {
+            "test1": {
+                "properties": {
+                    'sub1': {
+                        'type1': 'string',
+                    }
+                }
+            },
+            "test2": {
+                "properties": {
+                    'sub2': {
+                        'type2': 'string',
+                    }
+                }
+            }
+        }
+    }
+    runner = CliRunner()
+
+    result = runner.invoke(
+        mapping_to_jinja_cli,
+        ['-', '-', '--mapping-type', 'mytype'],
+        input=json.dumps(mapping),
+    )
+
+    assert_exception(result, AssertionError)
+
+
+def test_mapping_to_jinja_wo_type():
+    """Test mapping_to_jinja with a valid single type mapping
+
+    Check mapping_to_jinja with a valid single type mapping not included in
+    a "mappings" dict.
+    """
+    mapping = {
+        "_all": {
+            "enable": False,
+        },
+        "numeric_detection": False,
+        "properties": {
+            "nb": {
+                "type": "short",
+                "store": True,
+            },
+            "obj": {
+                "type": "object",
+                "properties": {
+                    'sub': {
+                        'type': 'string',
+                    }
+                },
+            },
+            "name": {
+                "type": "string",
+            },
+        },
+        "date_detection": False,
+    }
+
+    # template which extends the generated one and will be compiled.
+    child_template = """
+    {% extends "generated"%}
+
+    {% block type %}
+    {{ super() }},
+    "top_attr": "top_value"
+    {%endblock%}
+
+    {% block type__PROPERTIES__ %}
+    {{ super() }},
+    "prop_attr": "prop_value"
+    {%endblock%}
+
+    {% block type__nb %}
+    {{ super() }},
+    "nb_attr": "nb_value"
+    {%endblock%}
+
+    {% block type__obj %}
+    {{ super() }},
+    "obj_attr": "obj_value"
+    {%endblock%}
+
+    {% block type__obj__PROPERTIES__ %}
+    {{ super() }},
+    "obj_prop_attr": "obj_prop_value"
+    {%endblock%}
+
+    {% block type__obj__sub %}
+    {{ super() }},
+    "obj_sub_attr": "obj_sub_value"
+    {%endblock%}
+
+    {% block type__name %}
+    {{ super() }},
+    "name_attr": "name_value"
+    {%endblock%}
+    }"""
+
+    # build expected output
+    expected = copy.deepcopy(mapping)
+    expected['top_attr'] = 'top_value'
+    expected['properties']['prop_attr'] = 'prop_value'
+    expected['properties']['nb']['nb_attr'] = 'nb_value'
+    expected['properties']['obj']['obj_attr'] = 'obj_value'
+    expected['properties']['obj']['properties']['obj_prop_attr'] = \
+        'obj_prop_value'
+    expected['properties']['obj']['properties']['sub']['obj_sub_attr'] = \
+        'obj_sub_value'
+    expected['properties']['name']['name_attr'] = 'name_value'
+
+    runner = CliRunner()
+
+    result = runner.invoke(
+        mapping_to_jinja_cli,
+        ['-', '-'],
         input=json.dumps(mapping),
     )
 

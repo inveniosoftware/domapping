@@ -50,7 +50,9 @@ def cli():
               help='Mapping generation configuration.')
 @click.option('--indent', '-i', default=4, type=click.INT,
               help='Output json indentation step.')
-def schema_to_mapping_cli(schema, output, config, indent):
+@click.option('--mapping-type', '-t',
+              help='ElasticSearch mapping type.')
+def schema_to_mapping_cli(schema, output, config, indent, mapping_type):
     """Generate Elasticsearch mapping from JSON Schema."""
     file_url = None
     if schema != sys.stdin and hasattr(schema, 'name'):
@@ -73,6 +75,12 @@ def schema_to_mapping_cli(schema, output, config, indent):
             config_instance.load(json.load(conf))
 
     mapping = schema_to_mapping(parsed_schema, id, {}, config_instance)
+    if mapping_type is not None:
+        mapping = {
+            'mappings': {
+                mapping_type: mapping
+            }
+        }
     json.dump(mapping, output, indent=indent)
 
 
@@ -81,14 +89,37 @@ def schema_to_mapping_cli(schema, output, config, indent):
 @click.argument('output', type=click.File('w'), default='-')
 @click.option('--indent', '-i', default=4, type=click.INT,
               help='Output template indentation step.')
-@click.option('--type', '-t', default='type', type=click.STRING,
+@click.option('--mapping-type', '-t', type=click.STRING,
               help='Root type name used in jinja block names.')
-def mapping_to_jinja_cli(mapping, output, indent, type):
+def mapping_to_jinja_cli(mapping, output, indent, mapping_type):
     """Generate jinja template from Elasticsearch mapping."""
+    default_type = 'type'
     parsed_mapping = json.load(mapping)
 
-    template = mapping_to_jinja(parsed_mapping, type, indent=indent)
-    output.write(template)
+    if 'mappings' in parsed_mapping:
+        n_mappings = len(parsed_mapping['mappings'])
+        assert not (n_mappings > 1 and mapping_type)
+
+        result = []
+        for item in parsed_mapping['mappings']:
+            template = mapping_to_jinja(
+                    parsed_mapping['mappings'][item],
+                    item if n_mappings != 1 or
+                    not mapping_type else mapping_type,
+                    indent=indent, start_indent=' ' * indent * 2)
+            result.append('{0}"{1}":{2}'.format(
+                    indent * 2 * ' ', item, template))
+        output.write('{{\n'
+                     '{0}"mappings": {{\n'
+                     '{1}\n'
+                     '{0}}}\n'
+                     '}}'.format(indent * ' ', ',\n'.join(result)))
+    else:
+        if not mapping_type:
+            mapping_type = default_type
+        template = mapping_to_jinja(
+                parsed_mapping, mapping_type, indent=indent)
+        output.write(template)
 
 
 @cli.command('jinja_to_mapping')

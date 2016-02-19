@@ -32,18 +32,19 @@ from six import iteritems
 from .mapping import clean_mapping
 
 
-def mapping_to_jinja(es_mapping, type_name, indent=2):
+def mapping_to_jinja(es_mapping, type_name, indent=2, start_indent=''):
     """Pretty pring an elasticsearch type mapping as a jinja template.
 
     :param es_mapping: elasticsearch mapping
     :param type_name: name of the elasticsearch type
     :param indent: intentation step
+    :param start_indent: base indent
     """
     result = []
     result += '{{\n'.format(type=type_name)
     result += _mapping_to_jinja_rec(es_mapping, type_name, indent,
-                                    ' ' * indent)
-    result += '}'
+                                    start_indent + ' ' * indent)
+    result += start_indent + '}'
     return ''.join(result)
 
 
