@@ -41,6 +41,9 @@ def test_simple_properties():
         'properties': {
             'attr1': {'type': 'string'},
             'attr2': {'type': 'boolean'},
+            'attr3': {'type': 'number'},
+            'attr4': {'enum': ['Hello', 'world']},
+            'attr5': {'enum': [0, 1, 2]},
         },
     }
     es_mapping = {
@@ -50,6 +53,9 @@ def test_simple_properties():
         'properties': {
             'attr1': {'type': 'string'},
             'attr2': {'type': 'boolean'},
+            'attr3': {'type': 'double'},
+            'attr4': {'type': 'string'},
+            'attr5': {'type': 'double'},
         },
     }
     result_mapping = schema_to_mapping(json_schema, json_schema['id'],

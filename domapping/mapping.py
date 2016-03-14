@@ -25,7 +25,7 @@
 """Elastic Search integration. mapping funtion."""
 
 import jsonschema
-from six import iteritems, string_types
+from six import integer_types, iteritems, string_types
 
 from .errors import JsonSchemaSupportError, UnknownFieldTypeError
 
@@ -321,17 +321,17 @@ def _guess_enum_type(enum_array, path):
 
     Only string values are supported for the time being.
     """
-    for value in enum_array:
-        if not isinstance(value, string_types):
-            raise UnknownFieldTypeError(
-                '"{}" enum value type is not supported. Schema field type'
-                ' cannot be guessed from enum. Only "string"'
-                ' values are accepted when "type" is not defined.'.format(
-                    value
-                ),
-                path)
-    # TODO: try to guess other types. How to do it for numbers as there
-    return 'string'
+    if all(isinstance(value, string_types) for value in enum_array):
+        return 'string'
+    elif all(isinstance(value, integer_types) for value in enum_array):
+        return 'number'
+    else:
+        raise UnknownFieldTypeError(
+            'Mixed types in "{}" enum are not supported. Schema field type'
+            ' cannot be guessed from enum. Only "string" or "integer"'
+            ' values are accepted when "type" is not defined.'.format(
+                enum_array
+            ), path)
 
 
 def clean_mapping(mapping):
