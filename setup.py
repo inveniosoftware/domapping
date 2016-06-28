@@ -116,7 +116,7 @@ setup(
     keywords='jsonschema, elasticsearch',
     license='GPLv2',
     author='CERN',
-    author_email='info@invenio-software.org',
+    author_email='info@inveniosoftware.org',
     url='https://github.com/inveniosoftware/domapping',
     packages=packages,
     zip_safe=False,
