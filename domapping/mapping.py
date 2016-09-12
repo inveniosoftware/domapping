@@ -178,6 +178,24 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
     if has_scope:
         resolver.push_scope(json_schema.get('id'))
 
+    def dict_search_and_retrieve(d, key=None):
+        """Get the values associated to a specific key in nested dicts.
+
+        :param d: Dictionnary to explore.
+        :type d: dict
+        :param key: key to look value for. If ``None``, it returns all values.
+        :type key: str
+        :return: A list containing the value associated to key.
+        :rtype: list
+        """
+        for k in d.keys():
+            if isinstance(d[k], dict):
+                for val in dict_search_and_retrieve(d[k], key):
+                    yield val
+            else:
+                if (key and k == key) or not key:
+                    yield d[k]
+
     # resolve reference if there are any
     while '$ref' in json_schema:
         path = json_schema.get('$ref')
@@ -186,7 +204,15 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
     if 'patternProperties' in json_schema:
         raise JsonSchemaSupportError('Schemas with patternProperties ' +
                                      'are not supported.', path)
-    if 'additionalProperties' in json_schema:
+
+    additionalPropertiesVals = dict_search_and_retrieve(json_schema,
+                                                        'additionalProperties')
+
+    # Check if we have any other value than False.
+    # False means that no additionalProperties are allowed.
+    # https://spacetelescope.github.io/
+    # understanding-json-schema/reference/object.html#properties
+    if any(additionalPropertiesVals):
         raise JsonSchemaSupportError('Schemas with ' +
                                      'additionalProperties are not ' +
                                      'supported.', path)

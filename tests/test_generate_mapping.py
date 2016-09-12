@@ -347,3 +347,35 @@ def test_redefine_attribute():
     with pytest.raises(JsonSchemaSupportError):
         schema_to_mapping(json_schema, json_schema['id'],
                           {}, ElasticMappingGeneratorConfig())
+
+
+def test_additionnalproperties_value_to_false():
+    """Check that putting additionalProperties to False doesn't stop."""
+    json_schema = {
+        'id': 'https://example.org/root_schema#',
+        'type': 'object',
+        'properties': {
+            'attr1': {'type': 'string'},
+            'attr2': {'type': 'boolean'},
+            'attr3': {'type': 'number'},
+            'attr4': {'enum': ['Hello', 'world']},
+            'attr5': {'enum': [0, 1, 2]},
+        },
+        "additionalProperties": False
+    }
+    es_mapping = {
+        '_all': {'enable': True},
+        'numeric_detection': True,
+        'date_detection': True,
+        'properties': {
+            'attr1': {'type': 'string'},
+            'attr2': {'type': 'boolean'},
+            'attr3': {'type': 'double'},
+            'attr4': {'type': 'string'},
+            'attr5': {'type': 'double'},
+        },
+    }
+    result_mapping = schema_to_mapping(json_schema, json_schema['id'],
+                                       {},
+                                       ElasticMappingGeneratorConfig())
+    assert result_mapping == es_mapping
