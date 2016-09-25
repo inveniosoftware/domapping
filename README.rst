@@ -46,4 +46,4 @@ DoMapping provides a library and a CLI generating Elasticsearch mappings from JS
 *This is an experimental developer preview release.*
 
 * Free software: GPLv2 license
-* Documentation: https://pythonhosted.org/domapping/
+* Documentation: https://domapping.readthedocs.io/

@@ -24,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   http://pythonhosted.org/domapping/
+   http://domapping.readthedocs.io/
 
 Happy hacking and thanks for flying DoMapping.
 
