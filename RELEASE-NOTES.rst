@@ -1,8 +1,8 @@
-==================
- DoMapping v0.1.0
-==================
+====================
+ DoMapping v1.0.0a1
+====================
 
-DoMapping v0.1.0 was released on January 21, 2016.
+DoMapping v1.0.0a1 was released on October 12, 2016.
 
 About
 -----
@@ -19,18 +19,18 @@ What's new
 Installation
 ------------
 
-   $ pip install domapping==0.1.0
+   $ pip install domapping==v1.0.0a1
 
 Documentation
 -------------
 
-   http://domapping.readthedocs.io/
+   https://domapping.readthedocs.io/
 
 Happy hacking and thanks for flying DoMapping.
 
 | Invenio Development Team
 |   Email: info@inveniosoftware.org
 |   IRC: #invenio on irc.freenode.net
-|   Twitter: http://twitter.com/inveniosoftware
+|   Twitter: https://twitter.com/inveniosoftware
 |   GitHub: https://github.com/inveniosoftware/domapping
 |   URL: http://inveniosoftware.org
