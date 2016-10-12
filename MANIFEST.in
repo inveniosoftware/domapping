@@ -23,17 +23,17 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 
-# Check manifest will not automatically add these two files:
-include .dockerignore
-include .editorconfig
-
-# added by check_manifest.py
 include *.rst
 include *.sh
 include *.txt
-include docs/requirements.txt
+include .dockerignore
+include .editorconfig
+include .lgtm
 include LICENSE
+include MAINTAINERS
+include docs/requirements.txt
 include pytest.ini
+recursive-exclude examples/generated *
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
@@ -41,4 +41,3 @@ recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include examples *.json
 recursive-include tests *.py
-recursive-exclude examples/generated *
