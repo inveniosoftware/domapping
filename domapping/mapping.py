@@ -148,7 +148,7 @@ def schema_to_mapping(json_schema, base_uri, context_schemas, config):
                                       store=context_schemas,
                                       base_uri=base_uri)
     return _gen_type_properties(json_schema, base_uri, resolver, config, {
-        '_all': {'enable': config.all_field},
+        '_all': {'enabled': config.all_field},
         'numeric_detection': config.numeric_detection,
         'date_detection': config.date_detection,
         # empty type mapping

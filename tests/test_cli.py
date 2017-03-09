@@ -61,7 +61,7 @@ def assert_no_exception(result):
 
 expected_mapping = {
     "_all": {
-        "enable": False,
+        "enabled": False,
     },
     "numeric_detection": False,
     "properties": {
@@ -286,7 +286,7 @@ def test_mapping_to_jinja():
     """Test mapping_to_jinja."""
     mapping = {
         "_all": {
-            "enable": False,
+            "enabled": False,
         },
         "numeric_detection": False,
         "properties": {
@@ -513,7 +513,7 @@ def test_mapping_to_jinja_wo_type():
     """
     mapping = {
         "_all": {
-            "enable": False,
+            "enabled": False,
         },
         "numeric_detection": False,
         "properties": {

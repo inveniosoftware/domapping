@@ -47,7 +47,7 @@ def test_simple_properties():
         },
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -96,7 +96,7 @@ def test_references():
         },
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -167,7 +167,7 @@ def test_allOf_anyOf_oneOf():
         }]
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -234,7 +234,7 @@ def test_complex_array():
         },
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -277,7 +277,7 @@ def test_depencency_extension():
         }
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -302,7 +302,7 @@ def test_type_mapping():
         },
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
@@ -364,7 +364,7 @@ def test_additionnalproperties_value_to_false():
         "additionalProperties": False
     }
     es_mapping = {
-        '_all': {'enable': True},
+        '_all': {'enabled': True},
         'numeric_detection': True,
         'date_detection': True,
         'properties': {
