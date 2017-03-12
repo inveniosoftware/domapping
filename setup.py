@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of DoMapping.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # DoMapping is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -61,7 +61,7 @@ setup_requires = [
 
 install_requires = [
     'jsonschema>=2.5.0',
-    'six>=1.7.2',
+    'six>=1.9',
     'Jinja2>=2.7',
     'click>=5.1',
 ]
