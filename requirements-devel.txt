@@ -1,4 +1,0 @@
-# SPDX-FileCopyrightText: 2015, 2016 CERN.
-# SPDX-License-Identifier: MIT
-
--e git+git://github.com/Julian/jsonschema.git#egg=jsonschema
