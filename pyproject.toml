@@ -33,6 +33,7 @@ dependencies = [
     "jinja2>=2.7",
     "jsonschema>=2.5.0",
     "six>=1.9",
+    "pytest-isort>=4.0.0",
 ]
 requires-python = ">= 3.8"
 
@@ -45,10 +46,11 @@ tests = [
     "coverage>=4.0",
     "isort>=4.2.2",
     "pydocstyle>=1.0.0",
+    "pytest-black>=0.6.0",
     "pytest-cache>=1.0",
     "pytest-cov>=1.8.0",
-    "pytest-pep8>=1.0.6",
-    "pytest>=2.8.0",
+    "pytest-isort>=4.0.0",
+    "pytest>=2.8.0,<9",
     "responses>=0.5.1",
 ]
 
@@ -69,8 +71,8 @@ include = [
 profile = "black"
 
 [tool.pydocstyle]
-add_ignore = ""
+add_ignore = "D401"
 
 [tool.pytest.ini_options]
-addopts = '--pep8 --ignore=docs --cov=domapping --cov-report=term-missing'
+addopts = '--black --isort --ignore=docs --cov=domapping --cov-report=term-missing'
 testpaths = "tests domapping"
