@@ -4,7 +4,6 @@
 
 pydocstyle domapping && \
 isort -rc -c -df **/*.py && \
-check-manifest --ignore ".travis-*" && \
-sphinx-build -qnNW docs docs/_build/html && \
-python setup.py test && \
-sphinx-build -qnNW -b doctest docs docs/_build/doctest
+python -m sphinx.cmd.build -qnN docs docs/_build/html && \
+pytest && \
+python -m sphinx.cmd.build -qnN -b doctest docs docs/_build/doctest

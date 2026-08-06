@@ -21,8 +21,6 @@ The same result could be created with the cli:
     $ domapping jinja_to_mapping template.json --context_path generated
 """
 
-from __future__ import absolute_import, print_function
-
 import json
 import os
 
@@ -31,44 +29,42 @@ from domapping.templating import jinja_to_mapping, mapping_to_jinja
 
 config = ElasticMappingGeneratorConfig()
 
-with open('schema.json') as schema_file:
+with open("schema.json") as schema_file:
     # read the schema
     schema = json.load(schema_file)
 
-with open('config.json') as config_file:
+with open("config.json") as config_file:
     # load the configuration file
     config.load(json.load(config_file))
 
 # generate the intermediate mapping
-mapping = schema_to_mapping(schema, schema['id'], {}, config)
+mapping = schema_to_mapping(schema, schema["id"], {}, config)
 
-print('>> Intermediate mapping')
+print(">> Intermediate mapping")
 print(json.dumps(mapping, indent=4))
-print('=' * 50)
+print("=" * 50)
 
 # generate the jinja template
-generated_template = mapping_to_jinja(mapping, 'person')
+generated_template = mapping_to_jinja(mapping, "person")
 
-generated_template_dir = 'generated'
+generated_template_dir = "generated"
 if not os.path.exists(generated_template_dir):
     os.mkdir(generated_template_dir)
 
-generated_template_path = os.path.join(
-    generated_template_dir,
-    'generated_schema.json'
-)
+generated_template_path = os.path.join(generated_template_dir, "generated_schema.json")
 
 # write the template to a file so that it can be used by jinja
-with open(generated_template_path, 'w') as gen_schema_file:
+with open(generated_template_path, "w") as gen_schema_file:
     gen_schema_file.write(generated_template)
 
 # generate the final mapping from a import template overriding blocks
 # of the generated one
-with open('template.json') as overriding_template_file:
+with open("template.json") as overriding_template_file:
     overriding_template = overriding_template_file.read()
 
-final_mapping = jinja_to_mapping(overriding_template,
-                                 context_paths=[generated_template_dir])
+final_mapping = jinja_to_mapping(
+    overriding_template, context_paths=[generated_template_dir]
+)
 
-print('>> Final mapping')
+print(">> Final mapping")
 print(json.dumps(final_mapping, indent=4))

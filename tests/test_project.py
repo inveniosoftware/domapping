@@ -7,4 +7,5 @@
 def test_version():
     """Test version import."""
     from domapping import __version__
+
     assert __version__
