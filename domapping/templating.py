@@ -6,7 +6,6 @@
 import json
 
 import jinja2
-from six import iteritems
 
 from .mapping import clean_mapping
 
@@ -35,12 +34,12 @@ def _mapping_to_jinja_rec(es_mapping, path="", indent=2, start_indent=""):
     """
     result = []
     result += f"{start_indent}{{% block {path} %}}\n"
-    for root_idx, (key, value) in enumerate(iteritems(es_mapping)):
+    for root_idx, (key, value) in enumerate(es_mapping.items()):
         if key == "properties":
             indent1 = start_indent + " " * indent
             result += f'{start_indent}"properties": {{\n'
             result += f"{indent1}{{% block {path}__PROPERTIES__ %}}\n"
-            for prop_idx, (prop_name, prop_schema) in enumerate(iteritems(value)):
+            for prop_idx, (prop_name, prop_schema) in enumerate(value.items()):
                 result += f'{indent1}"{prop_name}": {{\n'
 
                 result += _mapping_to_jinja_rec(

@@ -4,7 +4,6 @@
 """Elastic Search integration. mapping funtion."""
 
 import jsonschema
-from six import integer_types, iteritems, string_types
 
 from .errors import JsonSchemaSupportError, UnknownFieldTypeError
 
@@ -301,7 +300,7 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
             es_mapping["properties"] = es_properties
         # build the elasticsearch mapping corresponding to each json schema
         # property
-        for prop, prop_schema in iteritems(json_schema["properties"]):
+        for prop, prop_schema in json_schema["properties"].items():
             es_properties[prop] = _gen_type_properties(
                 prop_schema,
                 path + "/" + prop,
@@ -312,7 +311,7 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
         # visit the dependencies defining additional properties
         if "dependencies" in json_schema:
             deps_path = path + "/dependencies"
-            for prop, deps in iteritems(json_schema["dependencies"]):
+            for prop, deps in json_schema["dependencies"].items():
                 # if this is a "schema dependency", extend our current es
                 # mapping with it
                 if isinstance(deps, dict):
@@ -322,7 +321,7 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
     else:
         es_mapping["type"] = es_type
         if es_type_props:
-            for type_prop, type_prop_value in iteritems(es_type_props):
+            for type_prop, type_prop_value in es_type_props.items():
                 es_mapping[type_prop] = type_prop_value
 
     # pop the current jsonschema context
@@ -337,9 +336,9 @@ def _guess_enum_type(enum_array, path):
 
     Only string values are supported for the time being.
     """
-    if all(isinstance(value, string_types) for value in enum_array):
+    if all(isinstance(value, str) for value in enum_array):
         return "string"
-    elif all(isinstance(value, integer_types) for value in enum_array):
+    elif all(isinstance(value, int) for value in enum_array):
         return "number"
     else:
         raise UnknownFieldTypeError(
@@ -358,6 +357,6 @@ def clean_mapping(mapping):
     """
     return {
         key: (value if not isinstance(value, dict) else clean_mapping(value))
-        for (key, value) in iteritems(mapping)
+        for (key, value) in mapping.items()
         if value is not None
     }

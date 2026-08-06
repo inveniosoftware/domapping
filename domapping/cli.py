@@ -6,9 +6,9 @@
 import json
 import os
 import sys
+import urllib
 
 import click
-from six.moves import urllib
 
 from .errors import JsonSchemaSupportError
 from .mapping import ElasticMappingGeneratorConfig, schema_to_mapping
