@@ -595,14 +595,14 @@ def test_jinja_to_mapping():
     root_template_subdirectory = "sub"
     root_template_file = "root.json"
 
-    child_template = """
-    {{% extends "{root}" %}}
+    child_template = f"""
+    {{% extends "{os.path.join(root_template_subdirectory, root_template_file)}" %}}
 
     {{% block overriden %}}
     "my child": "sentence",
     "to remove": null
     {{% endblock %}}
-    """.format(root=os.path.join(root_template_subdirectory, root_template_file))
+    """
     child_template_file = "child.json"
 
     expected_output = {"my root": "sentence", "my child": "sentence"}

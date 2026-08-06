@@ -20,7 +20,7 @@ def mapping_to_jinja(es_mapping, type_name, indent=2, start_indent=""):
     :param start_indent: base indent
     """
     result = []
-    result += "{{\n".format(type=type_name)
+    result += "{{\n".format()
     result += _mapping_to_jinja_rec(
         es_mapping, type_name, indent, start_indent + " " * indent
     )
@@ -34,18 +34,14 @@ def _mapping_to_jinja_rec(es_mapping, path="", indent=2, start_indent=""):
     The printing is recursive.
     """
     result = []
-    result += "{i}{{% block {path} %}}\n".format(i=start_indent, path=path)
-    root_idx = 0
-    for key, value in iteritems(es_mapping):
+    result += f"{start_indent}{{% block {path} %}}\n"
+    for root_idx, (key, value) in enumerate(iteritems(es_mapping)):
         if key == "properties":
             indent1 = start_indent + " " * indent
-            result += '{i}"properties": {{\n'.format(i=start_indent)
-            result += "{i}{{% block {path}__PROPERTIES__ %}}\n".format(
-                i=indent1, path=path
-            )
-            prop_idx = 0
-            for prop_name, prop_schema in iteritems(value):
-                result += '{i}"{name}": {{\n'.format(i=indent1, name=prop_name)
+            result += f'{start_indent}"properties": {{\n'
+            result += f"{indent1}{{% block {path}__PROPERTIES__ %}}\n"
+            for prop_idx, (prop_name, prop_schema) in enumerate(iteritems(value)):
+                result += f'{indent1}"{prop_name}": {{\n'
 
                 result += _mapping_to_jinja_rec(
                     prop_schema, path + "__" + prop_name, indent, indent1 + " " * indent
@@ -54,16 +50,12 @@ def _mapping_to_jinja_rec(es_mapping, path="", indent=2, start_indent=""):
                 result += "{i}}}{sep}\n".format(
                     i=indent1, sep=("," if prop_idx < len(value) - 1 else "")
                 )
-                prop_idx += 1
-            result += "{i}{{% endblock %}}\n".format(i=indent1)
-            result += "{i}}}".format(i=start_indent)
+            result += f"{indent1}{{% endblock %}}\n"
+            result += f"{start_indent}}}"
         else:
-            result += '{i}"{name}": {val}'.format(
-                i=start_indent, name=key, val=json.dumps(value)
-            )
+            result += f'{start_indent}"{key}": {json.dumps(value)}'
         result += "{sep}\n".format(sep=("," if root_idx < len(es_mapping) - 1 else ""))
-        root_idx += 1
-    result += "{i}{{% endblock %}}\n".format(i=start_indent)
+    result += f"{start_indent}{{% endblock %}}\n"
     return result
 
 

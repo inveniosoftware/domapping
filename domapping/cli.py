@@ -18,7 +18,7 @@ from .templating import jinja_to_mapping, mapping_to_jinja
 @click.group()
 def cli():
     """CLI group."""
-    pass  # pragma: no cover
+    # pragma: no cover
 
 
 @cli.command("schema_to_mapping")
@@ -94,7 +94,7 @@ def mapping_to_jinja_cli(mapping, output, indent, mapping_type):
                 indent=indent,
                 start_indent=" " * indent * 2,
             )
-            result.append('{0}"{1}":{2}'.format(indent * 2 * " ", item, template))
+            result.append('{}"{}":{}'.format(indent * 2 * " ", item, template))
         output.write(
             '{{\n{0}"mappings": {{\n{1}\n{0}}}\n}}'.format(
                 indent * " ", ",\n".join(result)

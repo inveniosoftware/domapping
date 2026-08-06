@@ -21,8 +21,6 @@ The same result could be created with the cli:
     $ domapping jinja_to_mapping template.json --context_path generated
 """
 
-from __future__ import absolute_import, print_function
-
 import json
 import os
 

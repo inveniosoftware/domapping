@@ -9,12 +9,12 @@ from six import integer_types, iteritems, string_types
 from .errors import JsonSchemaSupportError, UnknownFieldTypeError
 
 
-class ElasticMappingGeneratorConfig(object):
+class ElasticMappingGeneratorConfig:
     """Configuration used during elasticsearch mapping generation."""
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
-        super(ElasticMappingGeneratorConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.all_field = True
         """Enable/Disable "all" field generation in elasticsearch mappings."""
         self.date_detection = True
@@ -169,10 +169,9 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
         :return: A list containing the value associated to key.
         :rtype: list
         """
-        for k in d.keys():
+        for k in d:
             if isinstance(d[k], dict):
-                for val in dict_search_and_retrieve(d[k], key):
-                    yield val
+                yield from dict_search_and_retrieve(d[k], key)
             else:
                 if (key and k == key) or not key:
                     yield d[k]
@@ -213,12 +212,10 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
         # visit each schema and use it to extend current elasticsearch
         # mapping
         path += "/" + collection_key
-        index = 0
-        for sub_schema in json_schema.get(collection_key):
+        for index, sub_schema in enumerate(json_schema.get(collection_key)):
             _gen_type_properties(
                 sub_schema, path + "[" + str(index) + "]", resolver, config, es_mapping
             )
-            index += 1
         return es_mapping
 
     # get json schema type
@@ -255,12 +252,10 @@ def _gen_type_properties(json_schema, path, resolver, config, es_mapping):
         # mapping
         path += "/items"
         if isinstance(items, list):
-            index = 0
-            for item in items:
+            for index, item in enumerate(items):
                 _gen_type_properties(
                     item, path + "[" + str(index) + "]", resolver, config, es_mapping
                 )
-                index += 1
             return es_mapping
         else:
             # visit items' schema and use it to extend current elasticsearch
@@ -348,9 +343,9 @@ def _guess_enum_type(enum_array, path):
         return "number"
     else:
         raise UnknownFieldTypeError(
-            'Mixed types in "{}" enum are not supported. Schema field type'
+            f'Mixed types in "{enum_array}" enum are not supported. Schema field type'
             ' cannot be guessed from enum. Only "string" or "integer"'
-            ' values are accepted when "type" is not defined.'.format(enum_array),
+            ' values are accepted when "type" is not defined.',
             path,
         )
 
