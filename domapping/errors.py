@@ -19,7 +19,7 @@ class JsonSchemaSupportError(Exception):
 
     def __str__(self):
         """Return the formatted error message string."""
-        return 'ERROR {0} IN {1}'.format(self.message, self.path)
+        return "ERROR {0} IN {1}".format(self.message, self.path)
 
 
 class UnknownFieldTypeError(Exception):
@@ -37,4 +37,4 @@ class UnknownFieldTypeError(Exception):
 
     def __str__(self):
         """Return the formatted error message string."""
-        return 'ERROR {0} IN {1}'.format(self.message, self.path)
+        return "ERROR {0} IN {1}".format(self.message, self.path)
